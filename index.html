@@ -14,16 +14,44 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
+    <div id="full-screen"></div>
     <div id="safe-area"></div>
     <script>
       const canvas = document.getElementById('canvas');
-      // 设置 canvas 的分辨率
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = 'yellow';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+      const fullScreenDiv = document.getElementById('full-screen'); // 获取 full-screen div 的引用
+
+      function resizeCanvasToDiv() {
+        if (canvas && fullScreenDiv) { // 确保元素都存在
+          // 获取 full-screen div 的渲染后宽度和高度
+          const divWidth = fullScreenDiv.offsetWidth;
+          const divHeight = fullScreenDiv.offsetHeight;
+
+          // 设置 canvas 绘图表面的实际宽度和高度
+          canvas.width = divWidth;
+          canvas.height = divHeight;
+
+          console.log(`Canvas resized to: ${canvas.width}x${canvas.height}`);
+          drawContent();
+        } else {
+          console.error("Could not find canvas or full-screen div element.");
+        }
+      }
+
+      // 页面加载时调整一次尺寸
+      // 使用 requestAnimationFrame 或 setTimeout 确保 fullScreenDiv 尺寸已计算完毕
+      requestAnimationFrame(resizeCanvasToDiv);
+
+      // 监听窗口大小变化事件，实时调整 canvas 尺寸
+      // 当窗口大小变化时，full-screen div 的尺寸也会变，所以需要重新获取
+      window.addEventListener('resize', resizeCanvasToDiv);
+
+      function drawContent() {
+        const ctx = canvas.getContext('2d');
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+      }
+      
     </script>
   </body>
 </html>
