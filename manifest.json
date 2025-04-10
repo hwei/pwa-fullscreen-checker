@@ -7,8 +7,8 @@
     "theme_color": "#ffffff",
     "icons": [
       {
-        "src": "icon.png",
-        "sizes": "192x192",
+        "src": "noto-v1--cat.png",
+        "sizes": "512x512",
         "type": "image/png"
       }
     ]
