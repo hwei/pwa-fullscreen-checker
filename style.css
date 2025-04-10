@@ -4,12 +4,6 @@ html, body {
   overflow: hidden;
   -webkit-overflow-scrolling: none;
   overscroll-behavior: none;
-  
-  /* 添加 safe area 变量 */
-  --safe-area-inset-top: env(safe-area-inset-top, 0px);
-  --safe-area-inset-right: env(safe-area-inset-right, 0px);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-area-inset-left: env(safe-area-inset-left, 0px);
 }
 
 body {
@@ -23,18 +17,6 @@ body {
   display: block;
 }
 
-#full-screen {
-  position: fixed;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  background-color: rgba(0, 0, 255, 0.3);
-  pointer-events: none;
-  z-index: 9999;
-  animation: pulse-blue 0.5s infinite;
-}
-
 #safe-area {
   position: fixed;
   top: env(safe-area-inset-top, 0px);
@@ -43,30 +25,5 @@ body {
   left: env(safe-area-inset-left, 0px);
   pointer-events: none;
   z-index: 9999;
-  animation: pulse-green 0.5s infinite;
+  opacity: 0;
 }
-
-@keyframes pulse-green {
-  0% {
-    background-color: rgba(0, 255, 0, 0.3);
-  }
-  50% {
-    background-color: rgba(0, 255, 0, 0);
-  }
-  100% {
-    background-color: rgba(0, 255, 0, 0.3);
-  }
-}
-
-@keyframes pulse-blue {
-  0% {
-    background-color: rgba(0, 0, 255, 0);
-  }
-  50% {
-    background-color: rgba(0, 0, 255, 0.3);
-  }
-  100% {
-    background-color: rgba(0, 0, 255, 0);
-  }
-}
-
