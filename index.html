@@ -20,10 +20,10 @@
       const dpr = window.devicePixelRatio || 1;
 
       const canvas = document.getElementById('canvas');
-      const sat = parseInt(getComputedStyle(canvas).getPropertyValue('--sat'));
-      const sar = parseInt(getComputedStyle(canvas).getPropertyValue('--sar'));
-      const sab = parseInt(getComputedStyle(canvas).getPropertyValue('--sab'));
-      const sal = parseInt(getComputedStyle(canvas).getPropertyValue('--sal'));
+      const sat = parseInt(getComputedStyle(document.body).getPropertyValue('--sat'));
+      const sar = parseInt(getComputedStyle(document.body).getPropertyValue('--sar'));
+      const sab = parseInt(getComputedStyle(document.body).getPropertyValue('--sab'));
+      const sal = parseInt(getComputedStyle(document.body).getPropertyValue('--sal'));
 
       const dprLine = `dpr: ${dpr}`;
       const safeAreaLine = `sat: ${sat}, sar: ${sar}, sab: ${sab}, sal: ${sal}`;
