@@ -21,14 +21,25 @@
       const canvas = document.getElementById('canvas');
 
       function resizeCanvasToDiv() {
-        const width = window.visualViewport?.width || window.innerWidth;
-        const height = window.visualViewport?.height || window.innerHeight;
+        let width, height;
+        if (isPwaMode) {
+          width = window.screen.width;
+          height = window.screen.height;
+        } else {
+          width = window.innerWidth;
+          height = window.innerHeight;
+        }
 
         document.getElementById('bit-text').textContent = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `, ${width}x${height}`;
 
-        // 设置 canvas 绘图表面的实际宽度和高度
-        canvas.width = width;
-        canvas.height = height;
+        // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+
+        // 调整 canvas 的 CSS 尺寸以匹配显示尺寸
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
 
         console.log(`Canvas resized to: ${canvas.width}x${canvas.height}`);
         drawContent();
@@ -46,10 +57,11 @@
         ctx.lineWidth = 10;
         ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-        const sat = parseInt(getComputedStyle(canvas).getPropertyValue('--sat'));
-        const sar = parseInt(getComputedStyle(canvas).getPropertyValue('--sar'));
-        const sab = parseInt(getComputedStyle(canvas).getPropertyValue('--sab'));
-        const sal = parseInt(getComputedStyle(canvas).getPropertyValue('--sal'));
+        const dpr = window.devicePixelRatio || 1;
+        const sat = parseInt(getComputedStyle(canvas).getPropertyValue('--sat')) * dpr;
+        const sar = parseInt(getComputedStyle(canvas).getPropertyValue('--sar')) * dpr;
+        const sab = parseInt(getComputedStyle(canvas).getPropertyValue('--sab')) * dpr;
+        const sal = parseInt(getComputedStyle(canvas).getPropertyValue('--sal')) * dpr;
 
         const safeAreaWidth = canvas.width - sal - sar;
         const safeAreaHeight = canvas.height - sat - sab;
