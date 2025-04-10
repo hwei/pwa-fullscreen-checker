@@ -14,7 +14,7 @@
   </head>
   <body>
     <div id="safe-area"></div>
-    <pre id="bit-text"></pre>
+    <pre id="debug-text"></pre>
     <canvas id="canvas"></canvas>
     <script>
       const isPwaMode = getIsPwaMode();
@@ -40,7 +40,7 @@
         const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
         const dprLine = `dpr: ${dpr}`;
         const safeAreaLine = `sat: ${sat}, sar: ${sar}, sab: ${sab}, sal: ${sal}`;
-        document.getElementById('bit-text').textContent = [pwaModeLine, dprLine, safeAreaLine].join('\n');
+        document.getElementById('debug-text').textContent = [pwaModeLine, dprLine, safeAreaLine].join('\n');
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
         canvas.width = width * dpr;
