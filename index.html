@@ -30,8 +30,15 @@
       function resizeCanvasToDiv() {
         let width, height;
         if (isPwaMode) {
-          width = window.screen.width;
-          height = window.screen.height;
+          // 如果 orientation 为 portrait，则使用 window.screen.width 和 window.screen.height
+          // 如果 orientation 为 landscape，则使用 window.screen.height 和 window.screen.width
+          if (window.orientation === 0 || window.orientation === 180) {
+            width = window.screen.width;
+            height = window.screen.height;
+          } else {
+            width = window.screen.height;
+            height = window.screen.width;
+          }
         } else {
           width = window.innerWidth;
           height = window.innerHeight;
