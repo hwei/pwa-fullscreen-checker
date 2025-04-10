@@ -3,6 +3,7 @@
     "short_name": "PWA Checker",
     "start_url": "/",
     "display": "standalone",
+    "viewport_fit": "cover",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
     "icons": [
