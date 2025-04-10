@@ -21,14 +21,8 @@
       const canvas = document.getElementById('canvas');
 
       function resizeCanvasToDiv() {
-        let width, height;
-        if (isPwaMode) {
-          width = window.screen.width;
-          height = window.screen.height;
-        } else {
-          width = window.innerWidth;
-          height = window.innerHeight;
-        }
+        const width = window.visualViewport?.width || window.innerWidth;
+        const height = window.visualViewport?.height || window.innerHeight;
 
         document.getElementById('bit-text').textContent = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `, ${width}x${height}`;
 
