@@ -1,17 +1,11 @@
 body {
   margin: 0;
-  padding: 0;
-  padding-bottom: env(safe-area-inset-bottom);
+  min-height: calc(100% + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+
   background-color: rgb(255, 0, 0);
   background-image: url('75-1999x2998.jpg');
   background-repeat: repeat;
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  position: relative;
 }
 h1 {
   color: white;
