@@ -17,16 +17,7 @@
     <canvas id="canvas"></canvas>
     <script>
       const isPwaMode = getIsPwaMode();
-      const dpr = window.devicePixelRatio || 1;
-
-      const canvas = document.getElementById('canvas');
-      const sat = parseInt(getComputedStyle(document.body).getPropertyValue('--sat'));
-      const sar = parseInt(getComputedStyle(document.body).getPropertyValue('--sar'));
-      const sab = parseInt(getComputedStyle(document.body).getPropertyValue('--sab'));
-      const sal = parseInt(getComputedStyle(document.body).getPropertyValue('--sal'));
-
-      const dprLine = `dpr: ${dpr}`;
-      const safeAreaLine = `sat: ${sat}, sar: ${sar}, sab: ${sab}, sal: ${sal}`;
+      const canvas = document.getElementById('canvas');      
 
       function resizeCanvasToDiv() {
         let width, height;
@@ -38,11 +29,18 @@
           height = window.innerHeight;
         }
 
+        const dpr = window.devicePixelRatio || 1;
+        const sat = getComputedStyle(document.body).getPropertyValue('--sat');
+        const sar = getComputedStyle(document.body).getPropertyValue('--sar');
+        const sab = getComputedStyle(document.body).getPropertyValue('--sab');
+        const sal = getComputedStyle(document.body).getPropertyValue('--sal');
+
         const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
-        document.getElementById('bit-text').textContent = [dprLine, safeAreaLine, pwaModeLine].join('\n');
+        const dprLine = `dpr: ${dpr}`;
+        const safeAreaLine = `sat: ${sat}, sar: ${sar}, sab: ${sab}, sal: ${sal}`;
+        document.getElementById('bit-text').textContent = [pwaModeLine, dprLine, safeAreaLine].join('\n');
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
-        const dpr = window.devicePixelRatio || 1;
         canvas.width = width * dpr;
         canvas.height = height * dpr;
 
@@ -50,7 +48,7 @@
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
 
-        drawContent();
+        drawContent(pxToNumber(sat) * dpr, pxToNumber(sar) * dpr, pxToNumber(sab) * dpr, pxToNumber(sal) * dpr);
       }
 
       // 页面加载时调整一次尺寸
@@ -59,20 +57,20 @@
       // 监听窗口大小变化事件，实时调整 canvas 尺寸
       window.addEventListener('resize', resizeCanvasToDiv);
 
-      function drawContent() {
+      function drawContent(sat, sar, sab, sal) {
         const ctx = canvas.getContext('2d');
         ctx.strokeStyle = 'yellow';
         ctx.lineWidth = 10;
         ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-        const safeAreaWidth = canvas.width - (sal + sar) * dpr;
-        const safeAreaHeight = canvas.height - (sat + sab) * dpr;
+        const safeAreaWidth = canvas.width - (sal + sar);
+        const safeAreaHeight = canvas.height - (sat + sab);
         
         // 绘制半透明蓝色方块
         ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
         ctx.fillRect(
-          sal * dpr,
-          sat * dpr,
+          sal,
+          sat,
           safeAreaWidth,
           safeAreaHeight
         );
@@ -103,6 +101,10 @@
         }
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('pwa') === 'true';
+      }
+
+      function pxToNumber(px) {
+        return parseInt(px.replace('px', ''));
       }
       
     </script>
