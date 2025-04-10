@@ -40,8 +40,7 @@
         clearTimeout(orientationChangeTimeout);
         
         // 设置新的定时器，延迟执行以确保方向已经稳定
-        // 100ms 的延迟通常足够
-        orientationChangeTimeout = setTimeout(resizeCanvasToDiv, 100);
+        orientationChangeTimeout = setTimeout(resizeCanvasToDiv, 10);
       }
 
       function resizeCanvasToDiv() {
