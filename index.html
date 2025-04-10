@@ -32,12 +32,15 @@
         if (isPwaMode) {
           // 如果 orientation 为 portrait，则使用 window.screen.width 和 window.screen.height
           // 如果 orientation 为 landscape，则使用 window.screen.height 和 window.screen.width
-          if (window.orientation === 0 || window.orientation === 180) {
+          if (screen.orientation.type === 'portrait-primary' || screen.orientation.type === 'portrait-secondary') {
             width = window.screen.width;
             height = window.screen.height;
-          } else {
+          } else if (screen.orientation.type === 'landscape-primary' || screen.orientation.type === 'landscape-secondary') {
             width = window.screen.height;
             height = window.screen.width;
+          } else {
+            width = window.innerWidth;
+            height = window.innerHeight;
           }
         } else {
           width = window.innerWidth;
@@ -47,7 +50,7 @@
         const dpr = window.devicePixelRatio || 1;
         const rect = safeArea.getBoundingClientRect();
         
-        updateDebugInfo(width, height, dpr, rect);
+        updateDebugInfo(width, height, dpr, rect, screen.orientation.type);
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
         canvas.width = width * dpr;
@@ -95,11 +98,12 @@
         }
       }
 
-      function updateDebugInfo(width, height, dpr, rect) {
+      function updateDebugInfo(width, height, dpr, rect, orientation) {
         const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
         const dprLine = `dpr: ${dpr}`;
         const safeAreaLine = `rect.left: ${rect.left}, rect.top: ${rect.top}, rect.width: ${rect.width}, rect.height: ${rect.height}`;
-        document.getElementById('debug-text').textContent = [pwaModeLine, dprLine, safeAreaLine].join('\n');
+        const orientationLine = `orientation: ${orientation}`;
+        document.getElementById('debug-text').textContent = [pwaModeLine, dprLine, safeAreaLine, orientationLine].join('\n');
       }
 
       function getIsPwaMode() {
