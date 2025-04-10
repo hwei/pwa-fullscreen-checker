@@ -32,14 +32,11 @@
 
         const dpr = window.devicePixelRatio || 1;
         const safeArea = document.getElementById('safe-area');
-        const sat = getComputedStyle(safeArea).getPropertyValue('top');
-        const sar = getComputedStyle(safeArea).getPropertyValue('right');
-        const sab = getComputedStyle(safeArea).getPropertyValue('bottom');
-        const sal = getComputedStyle(safeArea).getPropertyValue('left');
+        const rect = safeArea.getBoundingClientRect();
 
         const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
         const dprLine = `dpr: ${dpr}`;
-        const safeAreaLine = `sat: ${sat}, sar: ${sar}, sab: ${sab}, sal: ${sal}`;
+        const safeAreaLine = `rect.left: ${rect.left}, rect.top: ${rect.top}, rect.width: ${rect.width}, rect.height: ${rect.height}`;
         document.getElementById('debug-text').textContent = [pwaModeLine, dprLine, safeAreaLine].join('\n');
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
@@ -50,7 +47,7 @@
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
 
-        drawContent(pxToNumber(sat) * dpr, pxToNumber(sar) * dpr, pxToNumber(sab) * dpr, pxToNumber(sal) * dpr);
+        drawContent(rect, dpr);
       }
 
       // 页面加载时调整一次尺寸
@@ -59,22 +56,19 @@
       // 监听窗口大小变化事件，实时调整 canvas 尺寸
       window.addEventListener('resize', resizeCanvasToDiv);
 
-      function drawContent(sat, sar, sab, sal) {
+      function drawContent(safeAreaRect, dpr) {
         const ctx = canvas.getContext('2d');
         ctx.strokeStyle = 'yellow';
         ctx.lineWidth = 10;
         ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
-
-        const safeAreaWidth = canvas.width - (sal + sar);
-        const safeAreaHeight = canvas.height - (sat + sab);
         
         // 绘制半透明蓝色方块
         ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
         ctx.fillRect(
-          sal,
-          sat,
-          safeAreaWidth,
-          safeAreaHeight
+          safeAreaRect.left * dpr,
+          safeAreaRect.top * dpr,
+          safeAreaRect.width * dpr,
+          safeAreaRect.height * dpr
         );
 
         // 左下角绘制文字 test
