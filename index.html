@@ -21,20 +21,15 @@
       const fullScreenDiv = document.getElementById('full-screen'); // 获取 full-screen div 的引用
 
       function resizeCanvasToDiv() {
-        if (canvas && fullScreenDiv) { // 确保元素都存在
-          // 获取 full-screen div 的渲染后宽度和高度
-          const divWidth = fullScreenDiv.offsetWidth;
-          const divHeight = fullScreenDiv.offsetHeight;
+        const divWidth = window.screen.width;
+        const divHeight = window.screen.height;
 
-          // 设置 canvas 绘图表面的实际宽度和高度
-          canvas.width = divWidth;
-          canvas.height = divHeight;
+        // 设置 canvas 绘图表面的实际宽度和高度
+        canvas.width = divWidth;
+        canvas.height = divHeight;
 
-          console.log(`Canvas resized to: ${canvas.width}x${canvas.height}`);
-          drawContent();
-        } else {
-          console.error("Could not find canvas or full-screen div element.");
-        }
+        console.log(`Canvas resized to: ${canvas.width}x${canvas.height}`);
+        drawContent();
       }
 
       // 页面加载时调整一次尺寸
