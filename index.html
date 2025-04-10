@@ -28,9 +28,9 @@
       safeAreaObserver.observe(safeArea);
 
       function resizeCanvasToDiv() {
+        const orientation = getOrientation();
         let width, height;
         if (isPwaMode) {
-          const orientation = getOrientation();
           if (orientation === 'portrait') {
             width = window.screen.width;
             height = window.screen.height;
