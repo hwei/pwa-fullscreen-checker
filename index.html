@@ -34,7 +34,6 @@
       requestAnimationFrame(resizeCanvasToDiv);
 
       // 监听窗口大小变化事件，实时调整 canvas 尺寸
-      // 当窗口大小变化时，full-screen div 的尺寸也会变，所以需要重新获取
       window.addEventListener('resize', resizeCanvasToDiv);
 
       function drawContent() {
@@ -43,17 +42,22 @@
         ctx.lineWidth = 10;
         ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-        // 获取 safe area 的尺寸
-        const safeArea = document.getElementById('safe-area');
-        const safeAreaRect = safeArea.getBoundingClientRect();
+        const sat = parseInt(getComputedStyle(canvas).getPropertyValue('--sat'));
+        const sar = parseInt(getComputedStyle(canvas).getPropertyValue('--sar'));
+        const sab = parseInt(getComputedStyle(canvas).getPropertyValue('--sab'));
+        const sal = parseInt(getComputedStyle(canvas).getPropertyValue('--sal'));
+
+        const safeAreaWidth = canvas.width - sal - sar;
+        const safeAreaHeight = canvas.height - sat - sab;
+        console.log('safeAreaWidth', safeAreaWidth, 'safeAreaHeight', safeAreaHeight);
         
         // 绘制半透明蓝色方块
         ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
         ctx.fillRect(
-          safeAreaRect.left,
-          safeAreaRect.top,
-          safeAreaRect.width,
-          safeAreaRect.height
+          sal,
+          sat,
+          safeAreaWidth,
+          safeAreaHeight
         );
       }
       
