@@ -13,12 +13,20 @@
     <title>PWA Fullscreen Test</title>
   </head>
   <body>
-    <div id="bit-text"></div>
+    <pre id="bit-text"></pre>
     <canvas id="canvas"></canvas>
     <script>
       const isPwaMode = getIsPwaMode();
+      const dpr = window.devicePixelRatio || 1;
 
       const canvas = document.getElementById('canvas');
+      const sat = parseInt(getComputedStyle(canvas).getPropertyValue('--sat'));
+      const sar = parseInt(getComputedStyle(canvas).getPropertyValue('--sar'));
+      const sab = parseInt(getComputedStyle(canvas).getPropertyValue('--sab'));
+      const sal = parseInt(getComputedStyle(canvas).getPropertyValue('--sal'));
+
+      const dprLine = `dpr: ${dpr}`;
+      const safeAreaLine = `sat: ${sat}, sar: ${sar}, sab: ${sab}, sal: ${sal}`;
 
       function resizeCanvasToDiv() {
         let width, height;
@@ -30,7 +38,8 @@
           height = window.innerHeight;
         }
 
-        document.getElementById('bit-text').textContent = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `, ${width}x${height}`;
+        const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
+        document.getElementById('bit-text').textContent = [dprLine, safeAreaLine, pwaModeLine].join('\n');
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
         const dpr = window.devicePixelRatio || 1;
@@ -41,7 +50,6 @@
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
 
-        console.log(`Canvas resized to: ${canvas.width}x${canvas.height}`);
         drawContent();
       }
 
@@ -57,21 +65,14 @@
         ctx.lineWidth = 10;
         ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-        const dpr = window.devicePixelRatio || 1;
-        const sat = parseInt(getComputedStyle(canvas).getPropertyValue('--sat')) * dpr;
-        const sar = parseInt(getComputedStyle(canvas).getPropertyValue('--sar')) * dpr;
-        const sab = parseInt(getComputedStyle(canvas).getPropertyValue('--sab')) * dpr;
-        const sal = parseInt(getComputedStyle(canvas).getPropertyValue('--sal')) * dpr;
-
-        const safeAreaWidth = canvas.width - sal - sar;
-        const safeAreaHeight = canvas.height - sat - sab;
-        console.log('safeAreaWidth', safeAreaWidth, 'safeAreaHeight', safeAreaHeight);
+        const safeAreaWidth = canvas.width - (sal + sar) * dpr;
+        const safeAreaHeight = canvas.height - (sat + sab) * dpr;
         
         // 绘制半透明蓝色方块
         ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
         ctx.fillRect(
-          sal,
-          sat,
+          sal * dpr,
+          sat * dpr,
           safeAreaWidth,
           safeAreaHeight
         );
