@@ -13,6 +13,7 @@
     <title>PWA Fullscreen Test</title>
   </head>
   <body>
+    <div id="safe-area"></div>
     <pre id="bit-text"></pre>
     <canvas id="canvas"></canvas>
     <script>
@@ -30,10 +31,11 @@
         }
 
         const dpr = window.devicePixelRatio || 1;
-        const sat = getComputedStyle(document.body).getPropertyValue('--sat');
-        const sar = getComputedStyle(document.body).getPropertyValue('--sar');
-        const sab = getComputedStyle(document.body).getPropertyValue('--sab');
-        const sal = getComputedStyle(document.body).getPropertyValue('--sal');
+        const safeArea = document.getElementById('safe-area');
+        const sat = getComputedStyle(safeArea).getPropertyValue('top');
+        const sar = getComputedStyle(safeArea).getPropertyValue('right');
+        const sab = getComputedStyle(safeArea).getPropertyValue('bottom');
+        const sal = getComputedStyle(safeArea).getPropertyValue('left');
 
         const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
         const dprLine = `dpr: ${dpr}`;
