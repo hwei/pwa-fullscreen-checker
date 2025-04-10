@@ -16,7 +16,7 @@
     <div id="bit-text"></div>
     <canvas id="canvas"></canvas>
     <script>
-      document.getElementById('bit-text').textContent = `"${document.referrer}"`;
+      document.getElementById('bit-text').textContent = isPwaMode() ? 'PWA mode: true' : 'PWA mode: false';
 
       const canvas = document.getElementById('canvas');
 
@@ -61,6 +61,14 @@
           safeAreaWidth,
           safeAreaHeight
         );
+      }
+
+      function isPwaMode() {
+        if (window.navigator.standalone) {
+          return true;
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('pwa') === 'true';
       }
       
     </script>
