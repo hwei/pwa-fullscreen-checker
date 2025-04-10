@@ -27,6 +27,23 @@
       // 开始监听 safeArea
       safeAreaObserver.observe(safeArea);
 
+      // 监听方向变化事件
+      window.addEventListener('orientationchange', handleOrientationChange);
+
+      // 同时监听 resize 事件作为补充
+      window.addEventListener('resize', handleOrientationChange);
+
+      let orientationChangeTimeout;
+
+      function handleOrientationChange() {
+        // 清除之前的定时器
+        clearTimeout(orientationChangeTimeout);
+        
+        // 设置新的定时器，延迟执行以确保方向已经稳定
+        // 100ms 的延迟通常足够
+        orientationChangeTimeout = setTimeout(resizeCanvasToDiv, 100);
+      }
+
       function resizeCanvasToDiv() {
         const orientation = getOrientation();
         let width, height;
