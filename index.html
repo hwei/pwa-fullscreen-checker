@@ -14,11 +14,9 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
-    <div id="full-screen"></div>
     <div id="safe-area"></div>
     <script>
       const canvas = document.getElementById('canvas');
-      const fullScreenDiv = document.getElementById('full-screen'); // 获取 full-screen div 的引用
 
       function resizeCanvasToDiv() {
         const divWidth = window.screen.width;
@@ -33,7 +31,6 @@
       }
 
       // 页面加载时调整一次尺寸
-      // 使用 requestAnimationFrame 或 setTimeout 确保 fullScreenDiv 尺寸已计算完毕
       requestAnimationFrame(resizeCanvasToDiv);
 
       // 监听窗口大小变化事件，实时调整 canvas 尺寸
