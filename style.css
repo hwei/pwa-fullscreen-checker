@@ -10,6 +10,7 @@ body {
   background-color: rgb(255, 0, 0);
   background-image: url('75-1999x2998.jpg');
   background-repeat: repeat;
+  background-size: cover;
 }
 
 #canvas {
