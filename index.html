@@ -13,8 +13,11 @@
     <title>PWA Fullscreen Test</title>
   </head>
   <body>
+    <div id="bit-text"></div>
     <canvas id="canvas"></canvas>
     <script>
+      document.getElementById('bit-text').textContent = `"${window.location.href}"`;
+
       const canvas = document.getElementById('canvas');
 
       function resizeCanvasToDiv() {
