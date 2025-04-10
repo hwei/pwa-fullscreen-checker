@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 0;
+  padding-bottom: env(safe-area-inset-bottom);
   background-color: rgb(255, 0, 0);
   background-image: url('75-1999x2998.jpg');
   background-repeat: repeat;
@@ -10,6 +11,7 @@ body {
   min-height: -webkit-fill-available;
   box-sizing: border-box;
   overflow-x: hidden;
+  position: relative;
 }
 h1 {
   color: white;
