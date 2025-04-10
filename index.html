@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1, minimum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1, minimum-scale=1, orientation=portrait">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,6 +19,13 @@
     <script>
       const isPwaMode = getIsPwaMode();
       const canvas = document.getElementById('canvas');      
+      const safeArea = document.getElementById('safe-area');
+      
+      // 创建 ResizeObserver 实例监听 safeArea 尺寸变化
+      const safeAreaObserver = new ResizeObserver(resizeCanvasToDiv);
+      
+      // 开始监听 safeArea
+      safeAreaObserver.observe(safeArea);
 
       function resizeCanvasToDiv() {
         let width, height;
@@ -31,13 +38,9 @@
         }
 
         const dpr = window.devicePixelRatio || 1;
-        const safeArea = document.getElementById('safe-area');
         const rect = safeArea.getBoundingClientRect();
-
-        const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
-        const dprLine = `dpr: ${dpr}`;
-        const safeAreaLine = `rect.left: ${rect.left}, rect.top: ${rect.top}, rect.width: ${rect.width}, rect.height: ${rect.height}`;
-        document.getElementById('debug-text').textContent = [pwaModeLine, dprLine, safeAreaLine].join('\n');
+        
+        updateDebugInfo(width, height, dpr, rect);
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
         canvas.width = width * dpr;
@@ -49,12 +52,6 @@
 
         drawContent(rect, dpr);
       }
-
-      // 页面加载时调整一次尺寸
-      requestAnimationFrame(resizeCanvasToDiv);
-
-      // 监听窗口大小变化事件，实时调整 canvas 尺寸
-      window.addEventListener('resize', resizeCanvasToDiv);
 
       function drawContent(safeAreaRect, dpr) {
         const ctx = canvas.getContext('2d');
@@ -89,6 +86,13 @@
             }
           }
         }
+      }
+
+      function updateDebugInfo(width, height, dpr, rect) {
+        const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
+        const dprLine = `dpr: ${dpr}`;
+        const safeAreaLine = `rect.left: ${rect.left}, rect.top: ${rect.top}, rect.width: ${rect.width}, rect.height: ${rect.height}`;
+        document.getElementById('debug-text').textContent = [pwaModeLine, dprLine, safeAreaLine].join('\n');
       }
 
       function getIsPwaMode() {
