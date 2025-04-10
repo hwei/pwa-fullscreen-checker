@@ -30,12 +30,11 @@
       function resizeCanvasToDiv() {
         let width, height;
         if (isPwaMode) {
-          // 如果 orientation 为 portrait，则使用 window.screen.width 和 window.screen.height
-          // 如果 orientation 为 landscape，则使用 window.screen.height 和 window.screen.width
-          if (screen.orientation.type === 'portrait-primary' || screen.orientation.type === 'portrait-secondary') {
+          const orientation = getOrientation();
+          if (orientation === 'portrait') {
             width = window.screen.width;
             height = window.screen.height;
-          } else if (screen.orientation.type === 'landscape-primary' || screen.orientation.type === 'landscape-secondary') {
+          } else if (orientation === 'landscape') {
             width = window.screen.height;
             height = window.screen.width;
           } else {
@@ -50,7 +49,7 @@
         const dpr = window.devicePixelRatio || 1;
         const rect = safeArea.getBoundingClientRect();
         
-        updateDebugInfo(width, height, dpr, rect, screen.orientation.type);
+        updateDebugInfo(width, height, dpr, rect, orientation);
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
         canvas.width = width * dpr;
@@ -116,6 +115,28 @@
 
       function pxToNumber(px) {
         return parseInt(px.replace('px', ''));
+      }
+
+      function getOrientation() {
+        if (window.orientation !== undefined) {
+          // iOS 设备
+          return Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait';
+        } else if (screen.orientation) {
+          // 支持 ScreenOrientation API 的设备
+          switch (screen.orientation.type) {
+            case 'portrait-primary':
+            case 'portrait-secondary':
+              return 'portrait';
+            case 'landscape-primary':
+            case 'landscape-secondary':
+              return 'landscape';
+            default:
+              return 'unknown';
+          }
+        } else {
+          // 其他设备，通过宽高比判断
+          return window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+        }
       }
       
     </script>
