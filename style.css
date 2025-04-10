@@ -24,7 +24,7 @@ body {
   background-color: rgba(0, 0, 255, 0.3);
   pointer-events: none;
   z-index: 9999;
-  opacity: 0;
+  animation: pulse-blue 0.5s infinite;
 }
 
 #safe-area {
@@ -33,13 +33,12 @@ body {
   right: env(safe-area-inset-right, 0px);
   bottom: env(safe-area-inset-bottom, 0px);
   left: env(safe-area-inset-left, 0px);
-  background-color: rgba(0, 255, 0, 0.3);
   pointer-events: none;
   z-index: 9999;
-  animation: pulse 0.5s infinite;
+  animation: pulse-green 0.5s infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-green {
   0% {
     background-color: rgba(0, 255, 0, 0.3);
   }
@@ -50,3 +49,16 @@ body {
     background-color: rgba(0, 255, 0, 0.3);
   }
 }
+
+@keyframes pulse-blue {
+  0% {
+    background-color: rgba(0, 0, 255, 0);
+  }
+  50% {
+    background-color: rgba(0, 0, 255, 0.3);
+  }
+  100% {
+    background-color: rgba(0, 0, 255, 0);
+  }
+}
+
