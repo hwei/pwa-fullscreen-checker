@@ -17,9 +17,10 @@
     <pre id="debug-text"></pre>
     <canvas id="canvas"></canvas>
     <div id="mock-device">
-      <img id="bezel" src="apple-iphone-15-black-portrait.png" />
+      <img id="bezel" src="apple-iphone-15-black-portrait.png" alt="mock-device" />
       <div id="mock-safe-area"></div>
     </div>
+    <div id="mock-maximize-button">Maximize ↕</div>
 
     <script>
       const isPC = isDesktopBrowser();
@@ -28,26 +29,37 @@
       const safeArea = document.getElementById('safe-area');
       const mockSafeArea = document.getElementById('mock-safe-area');
       const mockDevice = document.getElementById('mock-device');
-      if (!isPC) {
+      const mockMaximizeButton = document.getElementById('mock-maximize-button');
+
+      let isMockMaximized = false;
+      if (isPC) {
+        // 按下 mockMaximizeButton 时，设置 mockDevice 的 zoom，让它左右或上下顶到页面边缘
+        mockMaximizeButton.addEventListener('click', () => {
+          isMockMaximized = !isMockMaximized;
+          mockMaximizeButton.classList.toggle('active');
+          scheculeResizeCanvas();
+        });
+      } else {
         mockDevice.style.display = 'none';
+        mockMaximizeButton.style.display = 'none';
       }
 
       // 创建 ResizeObserver 实例监听 safeArea 尺寸变化
-      const safeAreaObserver = new ResizeObserver(handleOrientationChange);
+      const safeAreaObserver = new ResizeObserver(scheculeResizeCanvas);
       
       // 开始监听 safeArea
       safeAreaObserver.observe(safeArea);
       safeAreaObserver.observe(mockSafeArea);
 
       // 监听方向变化事件
-      window.addEventListener('orientationchange', handleOrientationChange);
+      window.addEventListener('orientationchange', scheculeResizeCanvas);
 
       // 同时监听 resize 事件作为补充
-      window.addEventListener('resize', handleOrientationChange);
+      window.addEventListener('resize', scheculeResizeCanvas);
 
       let orientationChangeTimeout;
 
-      function handleOrientationChange() {
+      function scheculeResizeCanvas() {
         // 清除之前的定时器
         clearTimeout(orientationChangeTimeout);
         
@@ -56,6 +68,24 @@
       }
 
       function resizeCanvasToDiv() {
+        if (isMockMaximized) {
+          const modeDeviceWidth = pxToNumber(getComputedStyle(mockDevice).width);
+          const modeDeviceHeight = pxToNumber(getComputedStyle(mockDevice).height);
+
+          const scaleX = window.innerWidth / modeDeviceWidth;
+          const scaleY = window.innerHeight / modeDeviceHeight;
+          const scale = Math.min(scaleX, scaleY);
+
+          mockDevice.style.transform = `scale(${scale}, ${scale})`;
+          mockDevice.style.left = `${(window.innerWidth - modeDeviceWidth) / 2}px`;
+          mockDevice.style.top = `${(window.innerHeight - modeDeviceHeight) / 2}px`;
+          
+        } else {
+          mockDevice.style.top = '';
+          mockDevice.style.left = '';
+          mockDevice.style.transform = '';
+        }
+
         const orientation = getOrientation();
         let rectCanvas = new DOMRect();
         let rectSafeArea = safeArea.getBoundingClientRect();
@@ -65,8 +95,8 @@
             rectCanvas.height = window.innerHeight;
           } else {
             // PC 浏览器模式，使用 mock-device
-            rectCanvas = mockDevice.getBoundingClientRect();
-            rectSafeArea = mockSafeArea.getBoundingClientRect();
+            rectCanvas = integerizeDOMRect(mockDevice.getBoundingClientRect());
+            rectSafeArea = integerizeDOMRect(mockSafeArea.getBoundingClientRect());
             rectSafeArea.x -= rectCanvas.x;
             rectSafeArea.y -= rectCanvas.y;
           }
@@ -97,8 +127,8 @@
         canvas.height = rectCanvas.height * dpr;
 
         // 调整 canvas 的 CSS 尺寸以匹配显示尺寸
-        canvas.style.left = `${rectCanvas.x}px`;
-        canvas.style.top = `${rectCanvas.y}px`;
+        canvas.style.marginLeft = `${rectCanvas.x}px`;
+        canvas.style.marginTop = `${rectCanvas.y}px`;
         canvas.style.width = `${rectCanvas.width}px`;
         canvas.style.height = `${rectCanvas.height}px`;
 
@@ -168,6 +198,15 @@
 
       function pxToNumber(px) {
         return parseInt(px.replace('px', ''));
+      }
+
+      function integerizeDOMRect(rect) {
+        return new DOMRect(
+          Math.round(rect.x),
+          Math.round(rect.y),
+          Math.round(rect.width),
+          Math.round(rect.height)
+        );
       }
 
       function getOrientation() {
