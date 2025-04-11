@@ -16,16 +16,28 @@
     <div id="safe-area"></div>
     <pre id="debug-text"></pre>
     <canvas id="canvas"></canvas>
+    <div id="mock-device">
+      <img id="bezel" src="apple-iphone-15-black-portrait.png" />
+      <div id="mock-safe-area"></div>
+    </div>
+
     <script>
+      const isPC = isDesktopBrowser();
       const isPwaMode = getIsPwaMode();
       const canvas = document.getElementById('canvas');      
       const safeArea = document.getElementById('safe-area');
-      
+      const mockSafeArea = document.getElementById('mock-safe-area');
+      const mockDevice = document.getElementById('mock-device');
+      if (!isPC) {
+        mockDevice.style.display = 'none';
+      }
+
       // 创建 ResizeObserver 实例监听 safeArea 尺寸变化
-      const safeAreaObserver = new ResizeObserver(resizeCanvasToDiv);
+      const safeAreaObserver = new ResizeObserver(handleOrientationChange);
       
       // 开始监听 safeArea
       safeAreaObserver.observe(safeArea);
+      safeAreaObserver.observe(mockSafeArea);
 
       // 监听方向变化事件
       window.addEventListener('orientationchange', handleOrientationChange);
@@ -45,37 +57,52 @@
 
       function resizeCanvasToDiv() {
         const orientation = getOrientation();
-        let width, height;
-        if (isPwaMode) {
-          if (orientation === 'portrait') {
-            width = window.screen.width;
-            height = window.screen.height;
-          } else if (orientation === 'landscape') {
-            width = window.screen.height;
-            height = window.screen.width;
+        let rectCanvas = new DOMRect();
+        let rectSafeArea = safeArea.getBoundingClientRect();
+        if (isPC) {
+          if (isPwaMode) {
+            rectCanvas.width = window.innerWidth;
+            rectCanvas.height = window.innerHeight;
           } else {
-            width = window.innerWidth;
-            height = window.innerHeight;
+            // PC 浏览器模式，使用 mock-device
+            rectCanvas = mockDevice.getBoundingClientRect();
+            rectSafeArea = mockSafeArea.getBoundingClientRect();
+            rectSafeArea.x -= rectCanvas.x;
+            rectSafeArea.y -= rectCanvas.y;
           }
         } else {
-          width = window.innerWidth;
-          height = window.innerHeight;
+          if (isPwaMode) {
+            if (orientation === 'portrait') {
+              rectCanvas.width = window.screen.width;
+              rectCanvas.height = window.screen.height;
+            } else if (orientation === 'landscape') {
+              rectCanvas.width = window.screen.height;
+              rectCanvas.height = window.screen.width;
+            } else {
+              rectCanvas.width = window.innerWidth;
+              rectCanvas.height = window.innerHeight;
+            }
+          } else {
+            rectCanvas.width = window.innerWidth;
+            rectCanvas.height = window.innerHeight;
+          }
         }
 
         const dpr = window.devicePixelRatio || 1;
-        const rect = safeArea.getBoundingClientRect();
         
-        updateDebugInfo(width, height, dpr, rect, orientation);
+        updateDebugInfo(rectCanvas, rectSafeArea, dpr, orientation);
 
         // 设置 canvas 绘图表面的实际宽度和高度，考虑设备像素比
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
+        canvas.width = rectCanvas.width * dpr;
+        canvas.height = rectCanvas.height * dpr;
 
         // 调整 canvas 的 CSS 尺寸以匹配显示尺寸
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
+        canvas.style.left = `${rectCanvas.x}px`;
+        canvas.style.top = `${rectCanvas.y}px`;
+        canvas.style.width = `${rectCanvas.width}px`;
+        canvas.style.height = `${rectCanvas.height}px`;
 
-        drawContent(rect, dpr);
+        drawContent(rectSafeArea, dpr);
       }
 
       function drawContent(safeAreaRect, dpr) {
@@ -97,7 +124,6 @@
         ctx.fillStyle = 'white';
         ctx.font = '20px Arial';
         ctx.imageSmoothingEnabled = false;  // 关闭抗锯齿
-        ctx.textRendering = 'pixelated';    // 像素化渲染
         ctx.fillText('test', 10, canvas.height / 2);
 
         // 屏幕中间 10px * 10px 区域绘制纱窗状的白色像素点
@@ -113,12 +139,14 @@
         }
       }
 
-      function updateDebugInfo(width, height, dpr, rect, orientation) {
-        const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false') + `\n${width}x${height}`;
+      function updateDebugInfo(rectCanvas, rectSafeArea, dpr, orientation) {
+        const pcMockMobileModeLine = isPC ? 'Desktop Emulation Mode: true' : 'Desktop Emulation Mode: false';
+        const pwaModeLine = (isPwaMode ? 'PWA mode: true' : 'PWA mode: false');
+        const canvasLine = `Canvas: X: ${rectCanvas.x}, Y: ${rectCanvas.y}, W: ${rectCanvas.width}, H: ${rectCanvas.height}`;
+        const safeAreaLine = `Safe Area: X: ${rectSafeArea.left}, Y: ${rectSafeArea.top}, W: ${rectSafeArea.width}, H: ${rectSafeArea.height}`;
         const dprLine = `dpr: ${dpr}`;
-        const safeAreaLine = `rect.left: ${rect.left}, rect.top: ${rect.top}, rect.width: ${rect.width}, rect.height: ${rect.height}`;
         const orientationLine = `orientation: ${orientation}`;
-        document.getElementById('debug-text').textContent = [pwaModeLine, dprLine, safeAreaLine, orientationLine].join('\n');
+        document.getElementById('debug-text').textContent = [pcMockMobileModeLine, pwaModeLine, canvasLine, safeAreaLine, dprLine, orientationLine].join('\n');
       }
 
       function getIsPwaMode() {
@@ -127,6 +155,15 @@
         }
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('pwa') === 'true';
+      }
+
+      function isDesktopBrowser() {
+        const userAgent = navigator.userAgent.toLowerCase();
+        // 检查是否为桌面浏览器
+        const isDesktop = !/android|webos|iphone|ipad|ipod|blackberry|windows phone|opera mini|iemobile|mobile/i.test(userAgent);
+        // 检查是否为平板设备
+        const isTablet = /ipad|android(?!.*mobile)/i.test(userAgent);
+        return isDesktop && !isTablet;
       }
 
       function pxToNumber(px) {

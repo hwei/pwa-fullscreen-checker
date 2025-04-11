@@ -25,6 +25,7 @@ body {
 }
 
 #canvas {
+  position: absolute;
   display: block;
 }
 
@@ -41,4 +42,30 @@ body {
   white-space: pre-wrap;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+#mock-device {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 393px;
+  height: 852px;
+  z-index: 100;
+}
+
+#bezel {
+  position: absolute;
+  width: 473px;
+  height: 932px;
+  left: -40px;
+  top: -40px;
+}
+
+#mock-safe-area {
+  position: absolute;
+  top: 59px;
+  bottom: 34px;
+  left: 0px;
+  right: 0px;
 }

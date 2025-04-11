@@ -23,3 +23,11 @@
 - 屏幕正中心的半透明白色方块区域：验证Canvas 像素与设备真实像素一一对应的图形。
   - 对于高分辨率的手机，需要截图放大观察，验证这个区域的绘制是像素对齐的。
 - 左上角文字：debug 信息。非 Canvas 绘制。选中复制。
+
+# Mock Device
+- `#mock-device` 的 width, height 以及 `#bezel` 的 width, height, left, top 数据，来源于 Figma。
+  - 新建一个文件，Assets 搜索 iPhone 15 Pro。然后 Insert instance。
+  - 从 `iPhone 15 Pro` 节点，获取 `#mock-device` 的 width, height。
+  - 从 `iPhone 16 Pro - Black Titanium - Portrait` 获取 `#bezel` 的 width, height, left, top 数据。
+- `#bezel` 的图片，来源于 [mockuphone.com](https://mockuphone.com/model/iphone-15/)。
+- `#mock-safe-area` 的数据，来源于 [iPhone 15 Screen Sizes](https://useyourloaf.com/blog/iphone-15-screen-sizes/)。
