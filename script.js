@@ -7,7 +7,7 @@ const mockDevice = document.getElementById('mock-device');
 const mockMaximizeButton = document.getElementById('mock-maximize-button');
 
 let isMockMaximized = false;
-if (isPC) {
+if (isPC && !isPwaMode) {
   // 按下 mockMaximizeButton 时，设置 mockDevice 的 zoom，让它左右或上下顶到页面边缘
   mockMaximizeButton.addEventListener('click', () => {
     isMockMaximized = !isMockMaximized;
@@ -155,11 +155,13 @@ function updateDebugInfo(rectCanvas, rectSafeArea, dpr, orientation) {
 }
 
 function getIsPwaMode() {
-  if (window.navigator.standalone) {
+  // 检查是否在独立窗口中运行（PWA 模式）
+  if (window.matchMedia('(display-mode: standalone)').matches || 
+      window.navigator.standalone || 
+      document.referrer.includes('android-app://')) {
     return true;
   }
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get('pwa') === 'true';
+  return false;
 }
 
 function isDesktopBrowser() {
