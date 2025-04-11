@@ -25,7 +25,6 @@ body {
 }
 
 #canvas {
-  position: absolute;
   display: block;
 }
 
@@ -51,7 +50,7 @@ body {
   transform: translate(-50%, -50%);
   width: 393px;
   height: 852px;
-  z-index: 100;
+  z-index: 9999;
 }
 
 #bezel {
